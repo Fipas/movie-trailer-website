@@ -9,17 +9,15 @@ main_page_head = '''
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Fresh Tomatoes!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Movie Trailer Website!</title>
 
-    <!-- Bootstrap 3 -->
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap-theme.min.css">
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <style type="text/css" media="screen">
-        body {
-            padding-top: 80px;
-        }
         #trailer .modal-dialog {
             margin-top: 200px;
             width: 640px;
@@ -35,14 +33,7 @@ main_page_head = '''
             width: 100%;
             height: 100%;
         }
-        .movie-tile {
-            margin-bottom: 20px;
-            padding-top: 20px;
-        }
-        .movie-tile:hover {
-            background-color: #EEE;
-            cursor: pointer;
-        }
+
         .scale-media {
             padding-bottom: 56.25%;
             position: relative;
@@ -56,6 +47,7 @@ main_page_head = '''
             top: 0;
             background-color: white;
         }
+
     </style>
     <script type="text/javascript" charset="utf-8">
         // Pause the video when the modal is closed
@@ -65,7 +57,7 @@ main_page_head = '''
             $("#trailer-video-container").empty();
         });
         // Start playing the video whenever the trailer modal is opened
-        $(document).on('click', '.movie-tile', function (event) {
+        $(document).on('click', '.btn-outline-secondary', function (event) {
             var trailerYouTubeId = $(this).attr('data-trailer-youtube-id')
             var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
             $("#trailer-video-container").empty().append($("<iframe></iframe>", {
@@ -91,7 +83,7 @@ main_page_content = '''
   <body>
     <!-- Trailer Video Modal -->
     <div class="modal" id="trailer">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
             <img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
@@ -103,17 +95,17 @@ main_page_content = '''
     </div>
 
     <!-- Main Page Content -->
-    <div class="container">
-      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="#">Fresh Tomatoes Movie Trailers</a>
-          </div>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between">
+          <a href="#" class="navbar-brand d-flex align-items-center">
+            <strong>Movie Trailer Website</strong>
+          </a>
         </div>
       </div>
-    </div>
-    <div class="container">
-      {movie_tiles}
+    <div class="album py-5 bg-light">
+        <div class="container">
+            {movie_tiles}
+        </div>
     </div>
   </body>
 </html>
@@ -122,9 +114,19 @@ main_page_content = '''
 
 # A single movie entry html template
 movie_tile_content = '''
-<div class="col-md-6 col-lg-4 movie-tile text-center" data-trailer-youtube-id="{trailer_youtube_id}" data-toggle="modal" data-target="#trailer">
-    <img src="{poster_image_url}" width="220" height="342">
-    <h2>{movie_title}</h2>
+<div class="col-md-4">
+  <div class="card mb-4 shadow-sm">
+    <img class="card-img-top" src="{poster_image_url}" alt="Card image cap">
+    <div class="card-body">
+      <p class="card-text"><strong>Title: </strong>{movie_title}</br>
+                           <strong>Overview: </strong>{overview}</p>
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-trailer-youtube-id={trailer_youtube_id} data-target=#trailer data-toggle="modal">View trailer</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 '''
 
@@ -132,6 +134,7 @@ movie_tile_content = '''
 def create_movie_tiles_content(movies):
     # The HTML content for this section of the page
     content = ''
+    num_per_row = 0
     for movie in movies:
         # Extract the youtube ID from the url
         youtube_id_match = re.search(
@@ -141,12 +144,22 @@ def create_movie_tiles_content(movies):
         trailer_youtube_id = (youtube_id_match.group(0) if youtube_id_match
                               else None)
 
+        if num_per_row == 0:
+            content += '<div class="row">'
+
         # Append the tile for the movie with its content filled in
         content += movie_tile_content.format(
             movie_title=movie.title,
             poster_image_url=movie.poster_image_url,
-            trailer_youtube_id=trailer_youtube_id
+            trailer_youtube_id=trailer_youtube_id,
+            overview=movie.overview.encode('utf-8')
         )
+
+        num_per_row = num_per_row + 1
+        if num_per_row == 3:
+            content += '</div>'
+            num_per_row = 0
+
     return content
 
 

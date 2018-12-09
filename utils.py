@@ -13,7 +13,7 @@ from movie_list.json to populate the website
 """
 
 # Your API key for The Movie Database here
-API_KEY = 'abcf081382ede75d2a5dd95440777dd7'
+API_KEY = ''
 # URL to obtain a list of movies sorted by current most popular
 URL_LIST = 'https://api.themoviedb.org/3/discover/movie?page=1&include_video=true&include_adult=true&sort_by=popularity.desc&language=en-US&api_key={}'
 # URL to obtain a list of videos for a given movie

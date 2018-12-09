@@ -9,7 +9,7 @@ To be able to generate the website, Python 2.7.15 is required. For more informat
 
 # Usage
 
-It is possible to generate the website using a predefined collection of movies stored at `movie_list.json` file. To do so, navegate to the root directory and execute
+It is possible to generate the website using a predefined collection of movies stored at `movie_list.json` file. To do so, navigate to the root directory and execute
 ```
 python entertainment_center.py
 ```
